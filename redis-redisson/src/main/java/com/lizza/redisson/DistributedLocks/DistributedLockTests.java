@@ -41,7 +41,11 @@ public class DistributedLockTests {
                 RLock lock = redisson.getLock("lock-1");
                 lock.lock(1, TimeUnit.SECONDS);
                 Log.log("{} lock success", Thread.currentThread().getName());
-                try { Thread.sleep(500); } catch (Exception e) { e.printStackTrace(); }
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 lock.unlock();
                 Log.log("{} unlock success", Thread.currentThread().getName());
             });
@@ -61,7 +65,11 @@ public class DistributedLockTests {
                 RLock lock = redisson.getLock("lock-1");
                 lock.lock(1, TimeUnit.SECONDS);
                 Log.log("{} lock success", Thread.currentThread().getName());
-                try { Thread.sleep(1500); } catch (Exception e) { e.printStackTrace(); }
+                try {
+                    Thread.sleep(1500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 lock.unlock();
                 Log.log("{} unlock success", Thread.currentThread().getName());
             });
@@ -69,6 +77,12 @@ public class DistributedLockTests {
         Thread.currentThread().join();
     }
 
+    /**
+     * 1. 不设置锁过期时间, 锁会使用默认的过期时间: 30s
+     * 2. 锁会自动续约
+     * 续约时机:
+     * 续约时长:
+     */
     @Test
     public void test3() throws Exception {
         for (int i = 0; i < 10; i++) {
@@ -76,7 +90,11 @@ public class DistributedLockTests {
                 RLock lock = redisson.getLock("lock-1");
                 lock.lock();
                 Log.log("{} lock success", Thread.currentThread().getName());
-                try { Thread.sleep(10000); } catch (Exception e) { e.printStackTrace(); }
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 lock.unlock();
                 Log.log("{} unlock success", Thread.currentThread().getName());
             });
@@ -84,5 +102,16 @@ public class DistributedLockTests {
         Thread.currentThread().join();
     }
 
-
+    /**
+     * 验证锁的可重入
+     */
+    @Test
+    public void test4() throws Exception {
+        for (int i = 0; i < 10; i++) {
+            RLock lock = redisson.getLock("lock-1");
+            lock.lock();
+            Log.log("{} lock success", Thread.currentThread().getName());
+        }
+        Thread.currentThread().join();
+    }
 }
